@@ -34,5 +34,6 @@ public class HelpScreenException extends ArgumentParserException {
     public HelpScreenException(ArgumentParser parser) {
         super("Help Screen", parser);
     }
+
 }
 

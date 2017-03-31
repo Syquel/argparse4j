@@ -23,12 +23,12 @@
  */
 package net.sourceforge.argparse4j.impl.action;
 
-import java.util.Map;
-
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -39,25 +39,22 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
  * {@link #onAttach(Argument)} calls {@link Argument#setDefault(Object)} with
  * {@code false}. {@link #consumeArgument()} always returns {@code false}.
  * </p>
- * 
  */
 public class StoreTrueArgumentAction implements ArgumentAction {
 
     @Override
-    public void run(ArgumentParser parser, Argument arg,
-            Map<String, Object> attrs, String flag, Object value)
-            throws ArgumentParserException {
+    public void run(ArgumentParser parser, Argument arg, Map<String, Object> attrs, String flag, Object value) throws ArgumentParserException {
         attrs.put(arg.getDest(), true);
-    }
-
-    @Override
-    public boolean consumeArgument() {
-        return false;
     }
 
     @Override
     public void onAttach(Argument arg) {
         arg.setDefault(false);
+    }
+
+    @Override
+    public boolean consumeArgument() {
+        return false;
     }
 
 }

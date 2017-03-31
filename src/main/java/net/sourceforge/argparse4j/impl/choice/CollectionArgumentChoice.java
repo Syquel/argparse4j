@@ -23,11 +23,11 @@
  */
 package net.sourceforge.argparse4j.impl.choice;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import net.sourceforge.argparse4j.helper.TextHelper;
 import net.sourceforge.argparse4j.inf.ArgumentChoice;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * <p>
@@ -44,9 +44,8 @@ public class CollectionArgumentChoice<E> implements ArgumentChoice {
 
     /**
      * Initializes this object from given values.
-     * 
-     * @param values
-     *            Valid values
+     *
+     * @param values Valid values
      */
     public CollectionArgumentChoice(E... values) {
         values_ = Arrays.asList(values);
@@ -54,9 +53,8 @@ public class CollectionArgumentChoice<E> implements ArgumentChoice {
 
     /**
      * Initializes this object from given values.
-     * 
-     * @param values
-     *            Valid values
+     *
+     * @param values Valid values
      */
     public CollectionArgumentChoice(Collection<E> values) {
         values_ = values;
@@ -69,18 +67,18 @@ public class CollectionArgumentChoice<E> implements ArgumentChoice {
             // just return false.
             return false;
         }
+
         Object first = values_.iterator().next();
-        if (first.getClass().equals(val.getClass())
-                || first instanceof Enum && val instanceof Enum
-                && ((Enum) first).getDeclaringClass().equals(((Enum) val).getDeclaringClass())) {
+
+        boolean sameClass =
+            first.getClass().equals(val.getClass()) ||
+            first instanceof Enum && val instanceof Enum && ((Enum) first).getDeclaringClass().equals(((Enum) val).getDeclaringClass());
+
+        if (sameClass) {
             return values_.contains(val);
         } else {
-            throw new IllegalArgumentException(String.format(
-                    TextHelper.LOCALE_ROOT,
-                    "type mismatch (Make sure that you specified correct Argument.type()):"
-                            + " expected: %s actual: %s",
-                    first.getClass().getName(), val.getClass().getName()
-            ));
+            String errorString = "type mismatch (Make sure that you specified correct Argument.type()):" + " expected: %s actual: %s";
+            throw new IllegalArgumentException(String.format(TextHelper.LOCALE_ROOT, errorString, first.getClass().getName(), val.getClass().getName()));
         }
     }
 
@@ -93,4 +91,5 @@ public class CollectionArgumentChoice<E> implements ArgumentChoice {
     public String toString() {
         return textualFormat();
     }
+
 }

@@ -43,10 +43,10 @@ import net.sourceforge.argparse4j.inf.ArgumentType;
  * {@link ArgumentParserException}. This means it already act like a
  * {@link Argument#choices(Object...)}.
  * </p>
- * 
+ *
+ * @param <T> Type of enum
+ *
  * @deprecated Use {@link ReflectArgumentType} instead.
- * @param <T>
- *            Type of enum
  */
 public class EnumArgumentType<T extends Enum<T>> implements ArgumentType<T> {
 
@@ -57,17 +57,12 @@ public class EnumArgumentType<T extends Enum<T>> implements ArgumentType<T> {
     }
 
     @Override
-    public T convert(ArgumentParser parser, Argument arg, String value)
-            throws ArgumentParserException {
+    public T convert(ArgumentParser parser, Argument arg, String value) throws ArgumentParserException {
         try {
             return Enum.valueOf(type_, value);
         } catch (IllegalArgumentException e) {
-            String choices = TextHelper.concat(type_.getEnumConstants(), 0,
-                    ",", "{", "}");
-            throw new ArgumentParserException(String.format(
-                    TextHelper.LOCALE_ROOT,
-                    "could not convert '%s' (choose from %s)", value, choices),
-                    e, parser, arg);
+            String choices = TextHelper.concat(type_.getEnumConstants(), 0, ",", "{", "}");
+            throw new ArgumentParserException(String.format(TextHelper.LOCALE_ROOT, "could not convert '%s' (choose from %s)", value, choices), e, parser, arg);
         }
     }
 

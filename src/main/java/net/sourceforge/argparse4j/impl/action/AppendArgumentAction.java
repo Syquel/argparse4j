@@ -23,20 +23,20 @@
  */
 package net.sourceforge.argparse4j.impl.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * Argument action to store a list.
  * </p>
- * 
+ *
  * <p>
  * This action appends each argument value to the list. The list is of type
  * {@link java.util.List}. This is useful to allow an option to be specified
@@ -48,9 +48,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 public class AppendArgumentAction implements ArgumentAction {
 
     @Override
-    public void run(ArgumentParser parser, Argument arg,
-            Map<String, Object> attrs, String flag, Object value)
-            throws ArgumentParserException {
+    public void run(ArgumentParser parser, Argument arg, Map<String, Object> attrs, String flag, Object value) throws ArgumentParserException {
         if (attrs.containsKey(arg.getDest())) {
             Object obj = attrs.get(arg.getDest());
             if (obj instanceof List) {
@@ -64,12 +62,12 @@ public class AppendArgumentAction implements ArgumentAction {
     }
 
     @Override
-    public boolean consumeArgument() {
-        return true;
+    public void onAttach(Argument arg) {
     }
 
     @Override
-    public void onAttach(Argument arg) {
+    public boolean consumeArgument() {
+        return true;
     }
 
 }

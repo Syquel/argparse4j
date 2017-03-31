@@ -38,22 +38,21 @@ import java.util.Locale;
  * <p>
  * <strong>The application code should not use this class directly.</strong>
  * </p>
- * 
  */
 public final class TextHelper {
-
-    private TextHelper() {
-    }
 
     /**
      * Language neutral locale.
      */
     public static final Locale LOCALE_ROOT = Locale.ROOT;
-
     public static final String LINESEP = System.getProperty("line.separator");
 
-    public static <T> String concat(T a[], int offset, String sep,
-            String start, String end) {
+    private TextHelper() {
+    }
+
+    public static <T> String concat(
+        T a[], int offset, String sep, String start, String end)
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(start);
         if (a.length - offset > 0) {
@@ -70,13 +69,15 @@ public final class TextHelper {
         return concat(a, offset, sep, "", "");
     }
 
-    public static <T> String concat(Collection<T> a, int offset, String sep,
-            String start, String end) {
+    public static <T> String concat(
+        Collection<T> a, int offset, String sep, String start, String end)
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(start);
         Iterator<T> it;
-        for (it = a.iterator(); offset > 0 && it.hasNext(); --offset, it.next())
+        for (it = a.iterator(); offset > 0 && it.hasNext(); --offset, it.next()) {
             ;
+        }
         if (offset == 0 && it.hasNext()) {
             sb.append(it.next());
             while (it.hasNext()) {
@@ -91,22 +92,22 @@ public final class TextHelper {
         return concat(a, offset, sep, "", "");
     }
 
-    public static String wrap(TextWidthCounter textWidthCounter, String s,
-            int width, int initialOffset, String initialIndent,
-            String subsequentIndent) {
+    public static String wrap(
+        TextWidthCounter textWidthCounter, String s, int width, int initialOffset, String initialIndent, String subsequentIndent)
+    {
         BreakIterator iter = BreakIterator.getLineInstance();
         iter.setText(s);
         StringBuilder res = new StringBuilder(initialIndent);
         StringBuilder sb = new StringBuilder();
         int currentWidth = initialOffset + initialIndent.length();
-        for (int start = iter.first(), end = iter.next(); end != BreakIterator.DONE; start = end, end = iter
-                .next()) {
+        for (
+            int start = iter.first(), end = iter.next(); end != BreakIterator.DONE; start = end, end = iter.next()
+            ) {
             String sub = s.substring(start, end);
             int subwidth = textWidthCounter.width(sub);
             currentWidth += subwidth;
             if (currentWidth > width) {
-                res.append(adjustSpace(sb, width, currentWidth - subwidth))
-                        .append(TextHelper.LINESEP).append(subsequentIndent);
+                res.append(adjustSpace(sb, width, currentWidth - subwidth)).append(TextHelper.LINESEP).append(subsequentIndent);
                 sb.delete(0, sb.length());
                 currentWidth = subsequentIndent.length() + subwidth;
             }
@@ -130,25 +131,26 @@ public final class TextHelper {
      * spaces in sb to make it look more "natural". The insertion points are the
      * contagious block of white spaces. Before the processing, leading and
      * trailing white spaces are removed from sb.
-     * 
-     * @param sb
-     *            String to adjust
-     * @param width
-     *            maximum line width
-     * @param curwidth
-     *            current line width
+     *
+     * @param sb String to adjust
+     * @param width maximum line width
+     * @param curwidth current line width
+     *
      * @return adjusted sb
      */
-    public static StringBuilder adjustSpace(StringBuilder sb, int width,
-            int curwidth) {
+    public static StringBuilder adjustSpace(
+        StringBuilder sb, int width, int curwidth)
+    {
         int i, len = sb.length();
         int origLen = len;
-        for (i = 0; i < len && sb.charAt(i) == ' '; ++i)
+        for (i = 0; i < len && sb.charAt(i) == ' '; ++i) {
             ;
+        }
         sb.delete(0, i);
         len = sb.length();
-        for (i = len - 1; i >= 0 && sb.charAt(i) == ' '; --i)
+        for (i = len - 1; i >= 0 && sb.charAt(i) == ' '; --i) {
             ;
+        }
         sb.delete(i + 1, len);
         len = sb.length();
         curwidth -= origLen - len;
@@ -196,8 +198,9 @@ public final class TextHelper {
         return sb;
     }
 
-    public static void printHelp(PrintWriter writer, String title, String help,
-            TextWidthCounter textWidthCounter, int width) {
+    public static void printHelp(
+        PrintWriter writer, String title, String help, TextWidthCounter textWidthCounter, int width)
+    {
         int INDENT_WIDTH = 25;
         writer.print("  ");
         writer.print(title);
@@ -212,8 +215,7 @@ public final class TextHelper {
             for (int i = 0; i < indentWidth; ++i) {
                 writer.print(" ");
             }
-            writer.println(wrap(textWidthCounter, help, width, INDENT_WIDTH,
-                    "", "                         "));
+            writer.println(wrap(textWidthCounter, help, width, INDENT_WIDTH, "", "                         "));
         } else {
             writer.println();
         }
@@ -230,11 +232,10 @@ public final class TextHelper {
     /**
      * From src, find string whose prefix is prefix and store them in List and
      * return it.
-     * 
-     * @param src
-     *            collection contains strings to inspect
-     * @param prefix
-     *            prefix
+     *
+     * @param src collection contains strings to inspect
+     * @param prefix prefix
+     *
      * @return List of strings matched
      */
     public static List<String> findPrefix(Collection<String> src, String prefix) {
@@ -246,4 +247,5 @@ public final class TextHelper {
         }
         return res;
     }
+
 }

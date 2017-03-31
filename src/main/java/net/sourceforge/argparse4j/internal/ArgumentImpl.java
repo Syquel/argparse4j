@@ -23,12 +23,6 @@
  */
 package net.sourceforge.argparse4j.internal;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.PrefixPattern;
 import net.sourceforge.argparse4j.helper.TextHelper;
@@ -45,9 +39,14 @@ import net.sourceforge.argparse4j.inf.ArgumentType;
 import net.sourceforge.argparse4j.inf.FeatureControl;
 import net.sourceforge.argparse4j.inf.MetavarInference;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * <strong>The application code must not use this class directly.</strong>
- * 
  */
 public final class ArgumentImpl implements Argument {
 
@@ -72,32 +71,32 @@ public final class ArgumentImpl implements Argument {
         this(prefixPattern, null, nameOrFlags);
     }
 
-    public ArgumentImpl(PrefixPattern prefixPattern,
-            ArgumentGroupImpl argumentGroup, String... nameOrFlags) {
+    public ArgumentImpl(PrefixPattern prefixPattern, ArgumentGroupImpl argumentGroup, String... nameOrFlags) {
         if (nameOrFlags.length == 0) {
             throw new IllegalArgumentException("no nameOrFlags was specified");
         }
+
         argumentGroup_ = argumentGroup;
         if (nameOrFlags.length == 1 && !prefixPattern.match(nameOrFlags[0])) {
             if (argumentGroup_ != null && argumentGroup_.isMutex()) {
-                throw new IllegalArgumentException(
-                        "mutually exclusive arguments must be optional");
+                throw new IllegalArgumentException("mutually exclusive arguments must be optional");
             }
+
             name_ = nameOrFlags[0];
-            if (ArgumentParsers.getNoDestConversionForPositionalArgs() == false) {
+            if (!ArgumentParsers.getNoDestConversionForPositionalArgs()) {
                 dest_ = name_.replace('-', '_');
             }
         } else {
             flags_ = nameOrFlags;
             for (String flag : flags_) {
                 if (!prefixPattern.match(flag)) {
-                    throw new IllegalArgumentException(
-                            String.format(
-                                    TextHelper.LOCALE_ROOT,
-                                    "invalid option string '%s': must start with a character '%s'",
-                                    flag, prefixPattern.getPrefixChars()));
+                    throw new IllegalArgumentException(String.format(TextHelper.LOCALE_ROOT,
+                                                                     "invalid option string '%s': must start with a character '%s'",
+                                                                     flag,
+                                                                     prefixPattern.getPrefixChars()));
                 }
             }
+
             for (String flag : flags_) {
                 boolean longflag = prefixPattern.matchLongFlag(flag);
                 if (dest_ == null) {
@@ -110,38 +109,35 @@ public final class ArgumentImpl implements Argument {
                     break;
                 }
             }
-            dest_ = prefixPattern.removePrefix(dest_).replace('-', '_');
-        }
-    }
 
-    @Override
-    public String textualName() {
-        if (name_ == null) {
-            return TextHelper.concat(flags_, 0, "/");
-        } else {
-            return name_;
+            dest_ = prefixPattern.removePrefix(dest_).replace('-', '_');
         }
     }
 
     /**
      * Short syntax is used in usage message, e.g. --foo BAR
-     * 
+     *
      * @return short syntax
      */
     public String formatShortSyntax() {
         if (name_ == null) {
             StringBuilder sb = new StringBuilder();
+
             if (!required_) {
                 sb.append("[");
             }
+
             sb.append(flags_[0]);
+
             String mv = formatMetavar();
             if (!mv.isEmpty()) {
                 sb.append(" ").append(mv);
             }
+
             if (!required_) {
                 sb.append("]");
             }
+
             return sb.toString();
         } else {
             return formatMetavar();
@@ -151,17 +147,19 @@ public final class ArgumentImpl implements Argument {
     /**
      * Short syntax is used in usage message, e.g. --foo BAR, but without
      * bracket when this is not required option.
-     * 
+     *
      * @return short syntax
      */
     public String formatShortSyntaxNoBracket() {
         if (name_ == null) {
             StringBuilder sb = new StringBuilder();
             sb.append(flags_[0]);
+
             String mv = formatMetavar();
             if (!mv.isEmpty()) {
                 sb.append(" ").append(mv);
             }
+
             return sb.toString();
         } else {
             return formatMetavar();
@@ -172,21 +170,20 @@ public final class ArgumentImpl implements Argument {
         if (metavar_ == null) {
             if (choice_ == null) {
                 if (type_ instanceof MetavarInference) {
-                    String[] metavar = ((MetavarInference) type_)
-                            .inferMetavar();
+                    String[] metavar = ((MetavarInference) type_).inferMetavar();
                     if (metavar != null) {
                         return metavar;
                     }
                 }
 
                 if (isOptionalArgument()) {
-                    return new String[] { dest_.toUpperCase() };
+                    return new String[]{dest_.toUpperCase()};
                 }
 
-                return new String[] { dest_ };
+                return new String[]{dest_};
             }
 
-            return new String[] { choice_.textualFormat() };
+            return new String[]{choice_.textualFormat()};
         }
 
         return metavar_;
@@ -194,18 +191,16 @@ public final class ArgumentImpl implements Argument {
 
     public String formatMetavar() {
         StringBuilder sb = new StringBuilder();
+
         if (action_.consumeArgument()) {
             String[] metavar = resolveMetavar();
+
             if (minNumArg_ == 0 && maxNumArg_ == 1) {
                 sb.append("[").append(metavar[0]).append("]");
             } else if (minNumArg_ == 0 && maxNumArg_ == Integer.MAX_VALUE) {
-                sb.append("[").append(metavar[0]).append(" [")
-                        .append(metavar.length == 1 ? metavar[0] : metavar[1])
-                        .append(" ...]]");
+                sb.append("[").append(metavar[0]).append(" [").append(metavar.length == 1 ? metavar[0] : metavar[1]).append(" ...]]");
             } else if (minNumArg_ == 1 && maxNumArg_ == Integer.MAX_VALUE) {
-                sb.append(metavar[0]).append(" [")
-                        .append(metavar.length == 1 ? metavar[0] : metavar[1])
-                        .append(" ...]");
+                sb.append(metavar[0]).append(" [").append(metavar.length == 1 ? metavar[0] : metavar[1]).append(" ...]");
             } else if (minNumArg_ == -1) {
                 sb.append(metavar[0]);
             } else if (minNumArg_ > 0 && minNumArg_ == maxNumArg_) {
@@ -213,12 +208,15 @@ public final class ArgumentImpl implements Argument {
                 for (i = 0, max = Math.min(minNumArg_, metavar.length); i < max; ++i) {
                     sb.append(metavar[i]).append(" ");
                 }
+
                 for (; i < minNumArg_; ++i) {
                     sb.append(metavar[metavar.length - 1]).append(" ");
                 }
+
                 sb.delete(sb.length() - 1, sb.length());
             }
         }
+
         return sb.toString();
     }
 
@@ -227,13 +225,14 @@ public final class ArgumentImpl implements Argument {
             String mv = formatMetavar();
             StringBuilder sb = new StringBuilder();
 
-            if(ArgumentParsers.isSingleMetavar()) {
+            if (ArgumentParsers.isSingleMetavar()) {
                 for (String flag : flags_) {
-                    if(sb.length() > 0) {
+                    if (sb.length() > 0) {
                         sb.append(", ");
                     }
                     sb.append(flag);
                 }
+
                 if (!mv.isEmpty()) {
                     sb.append(" ").append(mv);
                 }
@@ -245,45 +244,46 @@ public final class ArgumentImpl implements Argument {
                     }
                     sb.append(", ");
                 }
+
                 if (sb.length() > 2) {
                     sb.delete(sb.length() - 2, sb.length());
                 }
             }
+
             return sb.toString();
         } else {
             return resolveMetavar()[0];
         }
     }
 
-    public void printHelp(PrintWriter writer, boolean defaultHelp,
-            TextWidthCounter textWidthCounter, int width) {
+    public void printHelp(PrintWriter writer, boolean defaultHelp, TextWidthCounter textWidthCounter, int width) {
         if (helpControl_ == Arguments.SUPPRESS) {
             return;
         }
+
         String help;
         if (defaultHelp && default_ != null) {
             StringBuilder sb = new StringBuilder(help_);
+
             if (!help_.isEmpty()) {
                 sb.append(" ");
             }
+
             sb.append("(default: ").append(default_.toString()).append(")");
             help = sb.toString();
         } else {
             help = help_;
         }
-        TextHelper.printHelp(writer, formatHelpTitle(), help, textWidthCounter,
-                width);
+
+        TextHelper.printHelp(writer, formatHelpTitle(), help, textWidthCounter, width);
     }
 
-    public Object convert(ArgumentParserImpl parser, String value)
-            throws ArgumentParserException {
+    public Object convert(ArgumentParserImpl parser, String value) throws ArgumentParserException {
         Object obj = type_.convert(parser, this, value);
         if (choice_ != null && !choice_.contains(obj)) {
-            throw new ArgumentParserException(String.format(
-                    TextHelper.LOCALE_ROOT,
-                    "invalid choice: '%s' (choose from %s)", value,
-                    choice_.textualFormat()), parser, this);
+            throw new ArgumentParserException(String.format(TextHelper.LOCALE_ROOT, "invalid choice: '%s' (choose from %s)", value, choice_.textualFormat()), parser, this);
         }
+
         return obj;
     }
 
@@ -292,6 +292,7 @@ public final class ArgumentImpl implements Argument {
         if (n <= 0) {
             throw new IllegalArgumentException("nargs must be positive integer");
         }
+
         minNumArg_ = maxNumArg_ = n;
         return this;
     }
@@ -308,9 +309,9 @@ public final class ArgumentImpl implements Argument {
             minNumArg_ = 0;
             maxNumArg_ = 1;
         } else {
-            throw new IllegalArgumentException(
-                    "narg expects positive integer or one of '*', '+' or '?'");
+            throw new IllegalArgumentException("narg expects positive integer or one of '*', '+' or '?'");
         }
+
         return this;
     }
 
@@ -318,13 +319,7 @@ public final class ArgumentImpl implements Argument {
     public ArgumentImpl setConst(Object value) {
         // Allow null
         const_ = value;
-        return this;
-    }
 
-    @Override
-    public <E> ArgumentImpl setConst(E... values) {
-        // Allow null
-        const_ = Arrays.asList(values);
         return this;
     }
 
@@ -332,6 +327,7 @@ public final class ArgumentImpl implements Argument {
     public ArgumentImpl setDefault(Object value) {
         // Allow null
         default_ = value;
+
         return this;
     }
 
@@ -339,17 +335,8 @@ public final class ArgumentImpl implements Argument {
     public <E> ArgumentImpl setDefault(E... values) {
         // Allow null
         default_ = Arrays.asList(values);
-        return this;
-    }
 
-    @Override
-    public ArgumentImpl setDefault(FeatureControl ctrl) {
-        defaultControl_ = ctrl;
         return this;
-    }
-
-    private <T> ReflectArgumentType<T> createReflectArgumentType(Class<T> type) {
-        return new ReflectArgumentType<T>(type);
     }
 
     @Override
@@ -357,6 +344,7 @@ public final class ArgumentImpl implements Argument {
         if (type == null) {
             throw new IllegalArgumentException("type cannot be null");
         }
+
         if (type.isPrimitive()) {
             // Convert primitive type class to its object counterpart
             if (type == boolean.class) {
@@ -381,6 +369,7 @@ public final class ArgumentImpl implements Argument {
         } else {
             type_ = createReflectArgumentType(type);
         }
+
         return this;
     }
 
@@ -389,13 +378,16 @@ public final class ArgumentImpl implements Argument {
         if (type == null) {
             throw new IllegalArgumentException("type cannot be null");
         }
+
         type_ = type;
+
         return this;
     }
 
     @Override
     public ArgumentImpl required(boolean required) {
         required_ = required;
+
         return this;
     }
 
@@ -404,8 +396,10 @@ public final class ArgumentImpl implements Argument {
         if (action == null) {
             throw new IllegalArgumentException("action cannot be null");
         }
+
         action_ = action;
         action_.onAttach(this);
+
         return this;
     }
 
@@ -414,7 +408,9 @@ public final class ArgumentImpl implements Argument {
         if (choice == null) {
             throw new IllegalArgumentException("choice cannot be null");
         }
+
         choice_ = choice;
+
         return this;
     }
 
@@ -423,7 +419,9 @@ public final class ArgumentImpl implements Argument {
         if (values == null) {
             throw new IllegalArgumentException("choice cannot be null");
         }
+
         choice_ = new CollectionArgumentChoice<E>(values);
+
         return this;
     }
 
@@ -432,7 +430,9 @@ public final class ArgumentImpl implements Argument {
         if (values == null) {
             throw new IllegalArgumentException("choice cannot be null");
         }
+
         choice_ = new CollectionArgumentChoice<E>(values);
+
         return this;
     }
 
@@ -441,7 +441,9 @@ public final class ArgumentImpl implements Argument {
         if (dest == null) {
             throw new IllegalArgumentException("dest cannot be null");
         }
+
         dest_ = dest;
+
         return this;
     }
 
@@ -450,37 +452,40 @@ public final class ArgumentImpl implements Argument {
         if (metavar.length == 0) {
             throw new IllegalArgumentException("No metavar specified");
         }
+
         for (String m : metavar) {
             if (m == null) {
                 throw new IllegalArgumentException("metavar cannot be null");
             }
         }
+
         metavar_ = metavar;
+
         return this;
     }
 
     @Override
     public ArgumentImpl help(String help) {
         help_ = TextHelper.nonNull(help);
+
         return this;
     }
 
     @Override
     public ArgumentImpl help(FeatureControl ctrl) {
         helpControl_ = ctrl;
+
         return this;
     }
 
-    public boolean isOptionalArgument() {
-        return name_ == null;
+    @Override
+    public String textualName() {
+        if (name_ == null) {
+            return TextHelper.concat(flags_, 0, "/");
+        } else {
+            return name_;
+        }
     }
-
-    public void run(ArgumentParserImpl parser, Map<String, Object> res,
-            String flag, Object value) throws ArgumentParserException {
-        action_.run(parser, this, res, flag, value);
-    }
-
-    // Getter methods
 
     @Override
     public String getDest() {
@@ -490,6 +495,14 @@ public final class ArgumentImpl implements Argument {
     @Override
     public Object getConst() {
         return const_;
+    }
+
+    @Override
+    public <E> ArgumentImpl setConst(E... values) {
+        // Allow null
+        const_ = Arrays.asList(values);
+
+        return this;
     }
 
     @Override
@@ -505,6 +518,15 @@ public final class ArgumentImpl implements Argument {
     }
 
     @Override
+    public ArgumentImpl setDefault(FeatureControl ctrl) {
+        defaultControl_ = ctrl;
+
+        return this;
+    }
+
+    // Getter methods
+
+    @Override
     public FeatureControl getDefaultControl() {
         return defaultControl_;
     }
@@ -512,6 +534,18 @@ public final class ArgumentImpl implements Argument {
     @Override
     public FeatureControl getHelpControl() {
         return helpControl_;
+    }
+
+    private <T> ReflectArgumentType<T> createReflectArgumentType(Class<T> type) {
+        return new ReflectArgumentType<T>(type);
+    }
+
+    public boolean isOptionalArgument() {
+        return name_ == null;
+    }
+
+    public void run(ArgumentParserImpl parser, Map<String, Object> res, String flag, Object value) throws ArgumentParserException {
+        action_.run(parser, this, res, flag, value);
     }
 
     public String getName() {
@@ -549,4 +583,5 @@ public final class ArgumentImpl implements Argument {
     public String[] getFlags() {
         return flags_;
     }
+
 }

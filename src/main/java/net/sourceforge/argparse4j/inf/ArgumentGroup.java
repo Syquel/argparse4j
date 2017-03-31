@@ -26,15 +26,14 @@ package net.sourceforge.argparse4j.inf;
 /**
  * This interface defines a method to conceptually group up {@link Argument}
  * objects.
- * 
  */
 public interface ArgumentGroup {
 
     /**
      * Sets description to customize help message of this group.
-     * 
-     * @param description
-     *            The description of this group.
+     *
+     * @param description The description of this group.
+     *
      * @return this
      */
     ArgumentGroup description(String description);
@@ -47,10 +46,11 @@ public interface ArgumentGroup {
      * <p>
      * See {@link ArgumentParser#addArgument(String...)} for details.
      * </p>
-     * 
-     * @param nameOrFlags
-     *            A name or a list of option strings of new {@link Argument}.
+     *
+     * @param nameOrFlags A name or a list of option strings of new {@link Argument}.
+     *
      * @return {@link Argument} object.
      */
     Argument addArgument(String... nameOrFlags);
+
 }

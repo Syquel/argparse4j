@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 /**
  * Returns the column width of the command line terminal from which this program
  * was started. Typically the column width is around 80 characters or so.
- * 
+ *
  * Currently works on Linux and OSX.
- * 
+ *
  * Returns -1 if the column width cannot be determined for some reason.
  */
 public class TerminalWidth {
@@ -36,8 +36,7 @@ public class TerminalWidth {
     private static final int UNKNOWN_WIDTH = -1;
 
     public static void main(String[] args) {
-        System.out.println("terminalWidth: "
-                + new TerminalWidth().getTerminalWidth());
+        System.out.println("terminalWidth: " + new TerminalWidth().getTerminalWidth());
     }
 
     public int getTerminalWidth() {
@@ -61,21 +60,22 @@ public class TerminalWidth {
     // http://grokbase.com/t/gg/clojure/127qwgscvc/how-do-you-determine-terminal-console-width-in-%60lein-repl%60
     private int getTerminalWidth2() throws IOException {
         String osName = System.getProperty("os.name");
+
         boolean isOSX = osName.startsWith("Mac OS X");
-        boolean isLinux = osName.startsWith("Linux")
-                || osName.startsWith("LINUX");
+        boolean isLinux = osName.startsWith("Linux") || osName.startsWith("LINUX");
         if (!isLinux && !isOSX) {
-            return UNKNOWN_WIDTH; // actually, this might also work on Solaris
-                                  // but this hasn't been tested
+            return UNKNOWN_WIDTH; // actually, this might also work on Solaris but this hasn't been tested
         }
-        ProcessBuilder builder = new ProcessBuilder(which("sh").toString(),
-                "-c", "stty -a < /dev/tty");
+
+        ProcessBuilder builder = new ProcessBuilder(which("sh").toString(), "-c", "stty -a < /dev/tty");
         builder.redirectErrorStream(true);
         Process process = builder.start();
+
         InputStream in = process.getInputStream();
         ByteArrayOutputStream resultBytes = new ByteArrayOutputStream();
         try {
             byte[] buf = new byte[1024];
+
             int len;
             while ((len = in.read(buf)) >= 0) {
                 resultBytes.write(buf, 0, len);
@@ -105,6 +105,7 @@ public class TerminalWidth {
             // speed 9600 baud; rows 50; columns 83; line = 0;
             pattern = "columns (\\d+)";
         }
+
         Matcher m = Pattern.compile(pattern).matcher(result);
         if (!m.find()) {
             return UNKNOWN_WIDTH;
@@ -120,14 +121,18 @@ public class TerminalWidth {
 
     private File which(String cmd) throws IOException {
         String path = System.getenv("PATH");
+
         if (path != null) {
-          for (String dir : path.split(Pattern.quote(File.pathSeparator))) {
-              File command = new File(dir.trim(), cmd);
-              if (command.canExecute()) {
-                  return command.getAbsoluteFile();
-              }
-          }
+            for (String dir : path.split(Pattern.quote(File.pathSeparator))) {
+                File command = new File(dir.trim(), cmd);
+
+                if (command.canExecute()) {
+                    return command.getAbsoluteFile();
+                }
+            }
         }
+
         throw new IOException("No command '" + cmd + "' on path " + path);
     }
+
 }

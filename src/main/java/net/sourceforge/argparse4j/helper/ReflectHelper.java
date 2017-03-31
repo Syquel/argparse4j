@@ -33,7 +33,6 @@ import java.util.List;
  * <p>
  * <strong>The application code should not use this class directly.</strong>
  * </p>
- * 
  */
 public final class ReflectHelper {
 
@@ -44,7 +43,7 @@ public final class ReflectHelper {
      * <p>
      * Convert {@code src} to object of type {@code targetType} recursively
      * </p>
-     * 
+     *
      * <p>
      * Convert {@code src} to object of type {@code targetType} recursively, but
      * it only converts {@link List} to array. If {@code targetType} is array
@@ -56,11 +55,10 @@ public final class ReflectHelper {
      * {@code targetType} is not array or {@code src} is not {@link List},
      * simply returns {@code src}.
      * </p>
-     * 
-     * @param targetType
-     *            The target type
-     * @param src
-     *            The src object
+     *
+     * @param targetType The target type
+     * @param src The src object
+     *
      * @return The converted object
      */
     public static Object list2Array(Class<?> targetType, Object src) {
@@ -69,12 +67,12 @@ public final class ReflectHelper {
             int len = list.size();
             Object dest = Array.newInstance(targetType.getComponentType(), len);
             for (int i = 0; i < len; ++i) {
-                Array.set(dest, i,
-                        list2Array(targetType.getComponentType(), list.get(i)));
+                Array.set(dest, i, list2Array(targetType.getComponentType(), list.get(i)));
             }
             return dest;
         } else {
             return src;
         }
     }
+
 }

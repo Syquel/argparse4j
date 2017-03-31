@@ -39,11 +39,9 @@ import net.sourceforge.argparse4j.inf.MetavarInference;
  * representation of the enum. For enums that do not override {@link Enum#toString()},
  * this behaves the same as {@link ReflectArgumentType}.
  *
- * @param <T>
- *            Type of enum
+ * @param <T> Type of enum
  */
-public class EnumStringArgumentType<T extends Enum<T>> implements
-        ArgumentType<T>, MetavarInference {
+public class EnumStringArgumentType<T extends Enum<T>> implements ArgumentType<T>, MetavarInference {
 
     private Class<T> type_;
 
@@ -54,29 +52,25 @@ public class EnumStringArgumentType<T extends Enum<T>> implements
     /**
      * <p>
      * Creates an {@code EnumStringArgumentType} for the given enum type.
-     * @param type
-     *            type of the enum the {@code EnumStringArgumentType} should convert to
-     * @return an {@code EnumStringArgumentType} that converts Strings to {@code type} 
+     *
+     * @param type type of the enum the {@code EnumStringArgumentType} should convert to
+     *
+     * @return an {@code EnumStringArgumentType} that converts Strings to {@code type}
      */
     public static <T extends Enum<T>> EnumStringArgumentType<T> forEnum(Class<T> type) {
         return new EnumStringArgumentType<T>(type);
     }
 
     @Override
-    public T convert(ArgumentParser parser, Argument arg, String value)
-            throws ArgumentParserException {
+    public T convert(ArgumentParser parser, Argument arg, String value) throws ArgumentParserException {
         for (T t : type_.getEnumConstants()) {
             if (t.toString().equals(value)) {
                 return t;
             }
         }
 
-        String choices = TextHelper.concat(type_.getEnumConstants(), 0,
-                ",", "{", "}");
-        throw new ArgumentParserException(String.format(
-                TextHelper.LOCALE_ROOT,
-                "could not convert '%s' (choose from %s)", value, choices),
-                parser, arg);
+        String choices = TextHelper.concat(type_.getEnumConstants(), 0, ",", "{", "}");
+        throw new ArgumentParserException(String.format(TextHelper.LOCALE_ROOT, "could not convert '%s' (choose from %s)", value, choices), parser, arg);
     }
 
     /**
@@ -87,13 +81,15 @@ public class EnumStringArgumentType<T extends Enum<T>> implements
      * The inferred metavar contains all enum constant string representation,
      * obtained by calling their {@link Object#toString()} method.
      * </p>
-     * 
+     *
      * @see net.sourceforge.argparse4j.inf.MetavarInference#inferMetavar()
      * @since 0.7.0
      */
     @Override
     public String[] inferMetavar() {
-        return new String[] { TextHelper.concat(type_.getEnumConstants(),
-                0, ",", "{", "}") };
+        return new String[]{
+            TextHelper.concat(type_.getEnumConstants(), 0, ",", "{", "}")
+        };
     }
+
 }

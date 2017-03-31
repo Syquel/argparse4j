@@ -29,14 +29,11 @@ import net.sourceforge.argparse4j.helper.TextHelper;
  * The exception thrown from {@link ArgumentParser#parseArgs(String[])} if error
  * occurred while processing command line argument. The argument {@code parser}
  * in constructor is the ArgumentParser object where an error occurred.
- * 
  */
 public class ArgumentParserException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
+
     private transient ArgumentParser parser_;
 
     public ArgumentParserException(ArgumentParser parser) {
@@ -49,8 +46,9 @@ public class ArgumentParserException extends Exception {
         parser_ = parser;
     }
 
-    public ArgumentParserException(String message, Throwable cause,
-            ArgumentParser parser) {
+    public ArgumentParserException(
+        String message, Throwable cause, ArgumentParser parser)
+    {
         super(message, cause);
         parser_ = parser;
     }
@@ -60,24 +58,26 @@ public class ArgumentParserException extends Exception {
         parser_ = parser;
     }
 
-    public ArgumentParserException(String message, ArgumentParser parser,
-            Argument arg) {
+    public ArgumentParserException(
+        String message, ArgumentParser parser, Argument arg)
+    {
         super(formatMessage(message, arg));
         parser_ = parser;
     }
 
-    public ArgumentParserException(String message, Throwable cause,
-            ArgumentParser parser, Argument arg) {
+    public ArgumentParserException(
+        String message, Throwable cause, ArgumentParser parser, Argument arg)
+    {
         super(formatMessage(message, arg), cause);
         parser_ = parser;
     }
 
     private static String formatMessage(String message, Argument arg) {
-        return String.format(TextHelper.LOCALE_ROOT, "argument %s: %s",
-                arg.textualName(), message);
+        return String.format(TextHelper.LOCALE_ROOT, "argument %s: %s", arg.textualName(), message);
     }
 
     public ArgumentParser getParser() {
         return parser_;
     }
+
 }

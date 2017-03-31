@@ -23,11 +23,6 @@
  */
 package net.sourceforge.argparse4j.internal;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.argparse4j.helper.TextHelper;
 import net.sourceforge.argparse4j.helper.TextWidthCounter;
 import net.sourceforge.argparse4j.inf.Argument;
@@ -38,9 +33,13 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * <strong>The application code must not use this class directly.</strong>
- * 
  */
 public final class SubparserImpl implements Subparser {
 
@@ -49,12 +48,9 @@ public final class SubparserImpl implements Subparser {
     private ArgumentParserImpl parser_;
     private String help_ = "";
 
-    public SubparserImpl(String prog, boolean addHelp, String prefixChars,
-            String fromFilePrefix, TextWidthCounter textWidthCounter,
-            String command, ArgumentParserImpl mainParser) {
+    public SubparserImpl(String prog, boolean addHelp, String prefixChars, String fromFilePrefix, TextWidthCounter textWidthCounter, String command, ArgumentParserImpl mainParser) {
         command_ = command;
-        parser_ = new ArgumentParserImpl(prog, addHelp, prefixChars,
-                fromFilePrefix, textWidthCounter, command, mainParser);
+        parser_ = new ArgumentParserImpl(prog, addHelp, prefixChars, fromFilePrefix, textWidthCounter, command, mainParser);
     }
 
     @Override
@@ -85,30 +81,6 @@ public final class SubparserImpl implements Subparser {
     @Override
     public SubparserImpl usage(String usage) {
         parser_.usage(usage);
-        return this;
-    }
-
-    @Override
-    public SubparserImpl description(String description) {
-        parser_.description(description);
-        return this;
-    }
-
-    @Override
-    public SubparserImpl epilog(String epilog) {
-        parser_.epilog(epilog);
-        return this;
-    }
-
-    @Override
-    public SubparserImpl version(String version) {
-        parser_.version(version);
-        return this;
-    }
-
-    @Override
-    public SubparserImpl defaultHelp(boolean defaultHelp) {
-        parser_.defaultHelp(defaultHelp);
         return this;
     }
 
@@ -158,26 +130,8 @@ public final class SubparserImpl implements Subparser {
     }
 
     @Override
-    public SubparserImpl setDefault(String dest, Object value) {
-        parser_.setDefault(dest, value);
-        return this;
-    }
-
-    @Override
-    public SubparserImpl setDefaults(Map<String, Object> attrs) {
-        parser_.setDefaults(attrs);
-        return this;
-    }
-
-    @Override
     public Object getDefault(String dest) {
         return parser_.getDefault(dest);
-    }
-
-    @Override
-    public SubparserImpl help(String help) {
-        help_ = TextHelper.nonNull(help);
-        return this;
     }
 
     @Override
@@ -191,20 +145,19 @@ public final class SubparserImpl implements Subparser {
     }
 
     @Override
-    public void parseArgs(String[] args, Map<String, Object> attrs)
-            throws ArgumentParserException {
+    public void parseArgs(String[] args, Map<String, Object> attrs) throws ArgumentParserException {
         parser_.parseArgs(args, attrs);
     }
 
     @Override
-    public void parseArgs(String[] args, Object userData)
-            throws ArgumentParserException {
+    public void parseArgs(String[] args, Object userData) throws ArgumentParserException {
         parser_.parseArgs(args, userData);
     }
 
     @Override
-    public void parseArgs(String[] args, Map<String, Object> attrs,
-            Object userData) throws ArgumentParserException {
+    public void parseArgs(
+        String[] args, Map<String, Object> attrs, Object userData) throws ArgumentParserException
+    {
         parser_.parseArgs(args, attrs, userData);
     }
 
@@ -214,27 +167,24 @@ public final class SubparserImpl implements Subparser {
     }
 
     @Override
-    public Namespace parseKnownArgs(String[] args, List<String> unknown)
-            throws ArgumentParserException {
+    public Namespace parseKnownArgs(String[] args, List<String> unknown) throws ArgumentParserException {
         return parser_.parseKnownArgs(args, unknown);
     }
 
     @Override
-    public void parseKnownArgs(String[] args, List<String> unknown,
-            Map<String, Object> attrs) throws ArgumentParserException {
+    public void parseKnownArgs(
+        String[] args, List<String> unknown, Map<String, Object> attrs) throws ArgumentParserException
+    {
         parser_.parseKnownArgs(args, unknown, attrs);
     }
 
     @Override
-    public void parseKnownArgs(String[] args, List<String> unknown,
-            Object userData) throws ArgumentParserException {
+    public void parseKnownArgs(String[] args, List<String> unknown, Object userData) throws ArgumentParserException {
         parser_.parseKnownArgs(args, unknown, userData);
     }
 
     @Override
-    public void parseKnownArgs(String[] args, List<String> unknown,
-            Map<String, Object> attrs, Object userData)
-            throws ArgumentParserException {
+    public void parseKnownArgs(String[] args, List<String> unknown, Map<String, Object> attrs, Object userData) throws ArgumentParserException {
         parser_.parseKnownArgs(args, unknown, attrs, userData);
     }
 
@@ -249,31 +199,76 @@ public final class SubparserImpl implements Subparser {
     }
 
     @Override
-    public SubparserImpl aliases(String... alias) {
-        parser_.getMainParser().addSubparsers().addAlias(this, alias);
-        for (String s : alias) {
-            aliases_.add(s);
-        }
+    public SubparserImpl description(String description) {
+        parser_.description(description);
         return this;
     }
 
-    public void parseArgs(ParseState state, Map<String, Object> opts)
-            throws ArgumentParserException {
+    @Override
+    public SubparserImpl epilog(String epilog) {
+        parser_.epilog(epilog);
+        return this;
+    }
+
+    @Override
+    public SubparserImpl version(String version) {
+        parser_.version(version);
+        return this;
+    }
+
+    @Override
+    public SubparserImpl defaultHelp(boolean defaultHelp) {
+        parser_.defaultHelp(defaultHelp);
+        return this;
+    }
+
+    @Override
+    public SubparserImpl setDefault(String dest, Object value) {
+        parser_.setDefault(dest, value);
+        return this;
+    }
+
+    @Override
+    public SubparserImpl setDefaults(Map<String, Object> attrs) {
+        parser_.setDefaults(attrs);
+        return this;
+    }
+
+    @Override
+    public SubparserImpl help(String help) {
+        help_ = TextHelper.nonNull(help);
+        return this;
+    }
+
+    @Override
+    public SubparserImpl aliases(String... alias) {
+        parser_.getMainParser().addSubparsers().addAlias(this, alias);
+
+        for (String s : alias) {
+            aliases_.add(s);
+        }
+
+        return this;
+    }
+
+    public void parseArgs(ParseState state, Map<String, Object> opts) throws ArgumentParserException {
         parser_.parseArgs(state, opts);
     }
 
     public void printSubparserHelp(PrintWriter writer, int format_width) {
         if (!help_.isEmpty()) {
             String title = "  " + command_;
+
             if (!aliases_.isEmpty()) {
                 title += " (" + TextHelper.concat(aliases_, 0, ",") + ")";
             }
-            TextHelper.printHelp(writer, title, help_,
-                    parser_.getTextWidthCounter(), format_width);
+
+            TextHelper.printHelp(writer, title, help_, parser_.getTextWidthCounter(), format_width);
         }
     }
 
     public String getCommand() {
         return parser_.getCommand();
     }
+
 }

@@ -58,11 +58,13 @@ import net.sourceforge.argparse4j.inf.MetavarInference;
  * strings, and application can specify what strings are used as true or false
  * value.
  * </p>
- * 
+ *
  * @since 0.7.0
  */
-public class BooleanArgumentType implements ArgumentType<Boolean>,
-        MetavarInference {
+public class BooleanArgumentType implements ArgumentType<Boolean>, MetavarInference {
+
+    private String trueValue_;
+    private String falseValue_;
 
     /**
      * Creates BooleanArgumentType with "true" as true value, and "false" as
@@ -74,11 +76,9 @@ public class BooleanArgumentType implements ArgumentType<Boolean>,
 
     /**
      * Creates BooleanArgumentType with given values.
-     * 
-     * @param trueValue
-     *            string used as true value
-     * @param falseValue
-     *            string used as false value
+     *
+     * @param trueValue string used as true value
+     * @param falseValue string used as false value
      */
     public BooleanArgumentType(String trueValue, String falseValue) {
         this.trueValue_ = trueValue;
@@ -86,8 +86,7 @@ public class BooleanArgumentType implements ArgumentType<Boolean>,
     }
 
     @Override
-    public Boolean convert(ArgumentParser parser, Argument arg, String value)
-            throws ArgumentParserException {
+    public Boolean convert(ArgumentParser parser, Argument arg, String value) throws ArgumentParserException {
         if (trueValue_.equals(value)) {
             return Boolean.TRUE;
         }
@@ -96,23 +95,20 @@ public class BooleanArgumentType implements ArgumentType<Boolean>,
             return Boolean.FALSE;
         }
 
-        throw new ArgumentParserException(String.format(TextHelper.LOCALE_ROOT,
-                "could not convert '%s' (choose from %s)", value,
-                inferMetavar()[0]), parser, arg);
+        throw new ArgumentParserException(String.format(TextHelper.LOCALE_ROOT, "could not convert '%s' (choose from %s)", value, inferMetavar()[0]), parser, arg);
     }
 
     /**
      * <p>
      * Infers metavar based on given strings.
      * </p>
-     * 
+     *
      * @see net.sourceforge.argparse4j.inf.MetavarInference#inferMetavar()
      */
     @Override
     public String[] inferMetavar() {
-        return new String[] { TextHelper.concat(new String[] { trueValue_,
-                falseValue_ }, 0, ",", "{", "}") };
+        return new String[] {
+            TextHelper.concat(new String[] { trueValue_, falseValue_ }, 0, ",", "{", "}")
+        };
     }
-
-    private String trueValue_, falseValue_;
 }
